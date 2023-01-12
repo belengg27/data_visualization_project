@@ -20,15 +20,14 @@ histogram of  data prices
 library(shiny)
 
 # Load the data
-data <- read.csv("listings_detailed.csv")
+data <- read.csv("data/listings_detailed.csv")
 data<-head(data)
 data$price <- as.numeric(gsub("[$,]", "", data$price))
 
 
 # Define the UI
 ui <- fluidPage(
-  numericInput("min_price", "Minimum Price:", min = min(data$price), max = max(data$price), value = min(data$price)),
-  numericInput("max_price", "Maximum Price:", min = min(data$price), max = max(data$price), value = max(data$price)),
+  sliderInput("price_range", "Price Range:", min = min(data$price), max = max(data$price), value = c(min(data$price), max(data$price))),
   tableOutput("filtered_data")
 )
 
@@ -37,7 +36,7 @@ server <- function(input, output) {
   
   # Filter the data based on the price range
   filtered_data <- reactive({
-    data[data$price >= input$min_price & data$price <= input$max_price,]
+    data[data$price >= input$price_range[1] & data$price <= input$price_range[2],]
   })
   
   # Output the filtered data
@@ -48,6 +47,4 @@ server <- function(input, output) {
 
 # Run the app
 shinyApp(ui = ui, server = server)
-
-
 ```

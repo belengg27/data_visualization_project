@@ -23,7 +23,7 @@ library(mapproj)
 library(dplyr)
 library(ggplot2)
 #load data
-data <- read.csv("listings_detailed.csv")
+data <- read.csv("data/listings_detailed.csv")
 neighbourhoods <- unique(data$neighbourhood_cleansed)
 # Remove the "$" and "," characters and convert to numeric
 data$price <- as.numeric(gsub("[$,]", "", data$price))
@@ -52,8 +52,6 @@ server <- function(input, output) {
     histogram()
   })
 }
-
-
 
 # Run the app
 shinyApp(ui = ui, server = server)
