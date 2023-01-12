@@ -1,0 +1,50 @@
+---
+title: "data_vis"
+author: "group 20something"
+date: "2022-12-29"
+output: pdf_document
+---
+Load data 
+
+# ```{r}
+# calendar<- read.csv("calendar.csv")
+# listings<- read.csv("listings.csv")
+# listings_detailed<- read.csv("listings_detailed.csv")
+# neighbourhoods<- read.csv("neighbourhoods.csv")
+# reviews<- read.csv("reviews.csv")
+# reviews_detailed<- read.csv("reviews_detailed.csv")
+# ```
+histogram of  data prices
+
+```{r}
+library(shiny)
+
+# Load the data
+data <- read.csv("listings_detailed.csv")
+data<-head(data)
+data$price <- as.numeric(gsub("[$,]", "", data$price))
+
+
+# Define the UI
+ui <- fluidPage(
+  sliderInput("price_range", "Price Range:", min = min(data$price), max = max(data$price), value = c(min(data$price), max(data$price))),
+  tableOutput("filtered_data")
+)
+
+# Define the server logic
+server <- function(input, output) {
+  
+  # Filter the data based on the price range
+  filtered_data <- reactive({
+    data[data$price >= input$price_range[1] & data$price <= input$price_range[2],]
+  })
+  
+  # Output the filtered data
+  output$filtered_data <- renderTable({
+    filtered_data()
+  })
+}
+
+# Run the app
+shinyApp(ui = ui, server = server)
+```
